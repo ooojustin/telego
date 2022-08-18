@@ -1,11 +1,14 @@
 package telegram
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 )
 
+type IMap map[string]interface{}
 type Request int
 
 const (
@@ -15,6 +18,7 @@ const (
 
 const (
 	TelegramApiUrlFormat string = "https://api.telegram.org/bot%s/%s"
+	JsonContentType      string = "application/json"
 )
 
 var (
@@ -32,7 +36,11 @@ func NewTelegramClient(token string) *TelegramClient {
 	}
 }
 
-func (tc *TelegramClient) SendRequest(requestMethod Request, method string, data *map[string]interface{}) (*http.Response, error) {
+func TelegramClientError(method string, err error) error {
+	return fmt.Errorf("TelegramClient '%s' request failed: %w", method, err)
+}
+
+func (tc *TelegramClient) SendRequest(requestMethod Request, method string, data *IMap) (*http.Response, error) {
 	if requestMethod == POST && data == nil {
 		return nil, EmptyPostError
 	}
@@ -40,7 +48,17 @@ func (tc *TelegramClient) SendRequest(requestMethod Request, method string, data
 	if requestMethod == GET {
 		resp, err := http.Get(url)
 		if err != nil {
-			fmt.Errorf("TelegramClient 'GET' failed: %w", err)
+			return nil, TelegramClientError(method, err)
+		}
+		return resp, nil
+	} else if requestMethod == POST {
+		postBytes, err := json.Marshal(*data)
+		if err != nil {
+			return nil, TelegramClientError(method, err)
+		}
+		resp, err := http.Post(url, JsonContentType, bytes.NewBuffer(postBytes))
+		if err != nil {
+			return nil, TelegramClientError(method, err)
 		}
 		return resp, nil
 	}
