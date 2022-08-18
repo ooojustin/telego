@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -20,7 +21,11 @@ func main() {
 		exitf(0, "Failed to retrieve bot user info: %s", err)
 	}
 
-	fmt.Print(me)
+	meBytes, err := json.MarshalIndent(*me, "", "	")
+	if err == nil {
+		meStr := string(meBytes)
+		fmt.Println(meStr)
+	}
 }
 
 func exitf(code int, format string, a ...interface{}) {
