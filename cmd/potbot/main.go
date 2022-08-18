@@ -15,6 +15,12 @@ func main() {
 	}
 
 	client := telegram.NewTelegramClient(cfg.TelegramToken)
+	me, err := client.GetMe()
+	if err != nil {
+		exitf(0, "Failed to retrieve bot user info: %s", err)
+	}
+
+	fmt.Print(me)
 }
 
 func exitf(code int, format string, a ...interface{}) {
