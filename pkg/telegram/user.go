@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"encoding/json"
+	"errors"
 )
 
 // https://core.telegram.org/bots/api#user
@@ -24,8 +25,9 @@ type BotUser struct {
 }
 
 type GetMeResponse struct {
-	Ok     bool    `json:"ok"`
-	Result BotUser `mapstructure:"result"`
+	Ok          bool    `json:"ok"`
+	Result      BotUser `mapstructure:"result"`
+	Description string  `json:"description"`
 }
 
 func (tc *TelegramClient) GetMe() (*BotUser, error) {
@@ -44,6 +46,8 @@ func (tc *TelegramClient) GetMe() (*BotUser, error) {
 
 	if data.Ok {
 		return &data.Result, nil
+	} else if len(data.Description) > 0 {
+		return nil, errors.New(data.Description)
 	}
 
 	return nil, UnknownError
