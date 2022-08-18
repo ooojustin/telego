@@ -31,6 +31,13 @@ type GetMyCommandsResponse struct {
 	Description string       `json:"description"`
 }
 
+type DeleteMyCommandsResponse struct {
+	Ok          bool   `json:"ok"`
+	Result      bool   `json:"result"`
+	Description string `json:"description"`
+}
+
+// https://core.telegram.org/bots/api#setmycommands
 func (tc *TelegramClient) SetMyCommands(commands []BotCommand, scope *IMap, languageCode string) (bool, error) {
 	if scope == nil {
 		scope = &BotCommandScopeAllPrivateChats
@@ -61,12 +68,14 @@ func (tc *TelegramClient) SetMyCommands(commands []BotCommand, scope *IMap, lang
 	if data.Ok {
 		return data.Result, nil
 	} else if len(data.Description) > 0 {
-		return false, errors.New(data.Description)
+		err = errors.New(data.Description)
+		return false, fmt.Errorf("SetMyCommands failed: %w", err)
 	}
 
 	return false, UnknownError
 }
 
+// https://core.telegram.org/bots/api#getmycommands
 func (tc *TelegramClient) GetMyCommands(scope *IMap, languageCode string) (*[]BotCommand, error) {
 	if scope == nil {
 		scope = &BotCommandScopeAllPrivateChats
@@ -94,8 +103,44 @@ func (tc *TelegramClient) GetMyCommands(scope *IMap, languageCode string) (*[]Bo
 	if data.Ok {
 		return &data.Result, nil
 	} else if len(data.Description) > 0 {
-		return nil, errors.New(data.Description)
+		err = errors.New(data.Description)
+		return nil, fmt.Errorf("GetMyCommands failed: %w", err)
 	}
 
 	return nil, UnknownError
+}
+
+// https://core.telegram.org/bots/api#deletemycommands
+func (tc *TelegramClient) DeleteMyCommands(scope *IMap, languageCode string) (bool, error) {
+	if scope == nil {
+		scope = &BotCommandScopeAllPrivateChats
+	}
+
+	if len(languageCode) == 0 {
+		languageCode = DefaultLanguageCode
+	}
+
+	request := IMap{
+		"scope":         scope,
+		"language_code": languageCode,
+	}
+
+	resp, err := tc.SendRequest(POST, "deleteMyCommands", &request)
+	if err != nil {
+		return false, fmt.Errorf("DeleteMyCommands failed: %w", err)
+	}
+
+	defer resp.Body.Close()
+
+	var data DeleteMyCommandsResponse
+	err = json.NewDecoder(resp.Body).Decode(&data)
+
+	if data.Ok {
+		return data.Result, nil
+	} else if len(data.Description) > 0 {
+		err = errors.New(data.Description)
+		return false, fmt.Errorf("DeleteMyCommands failed: %w", err)
+	}
+
+	return false, UnknownError
 }

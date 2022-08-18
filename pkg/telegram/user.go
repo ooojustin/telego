@@ -30,6 +30,7 @@ type GetMeResponse struct {
 	Description string  `json:"description"`
 }
 
+// https://core.telegram.org/bots/api#getme
 func (tc *TelegramClient) GetMe() (*BotUser, error) {
 	resp, err := tc.SendRequest(GET, "getMe", nil)
 	if err != nil {
