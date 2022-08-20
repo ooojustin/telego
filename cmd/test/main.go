@@ -28,7 +28,7 @@ func testGetMe(client *telegram.TelegramClient) {
 }
 
 func testGetUpdates(client *telegram.TelegramClient) {
-	updates, err := client.GetUpdates([]string{})
+	updates, err := client.GetUpdates(0, []string{"message"})
 	if err != nil {
 		utils.Exitf(0, "testGetUpdates failed: %s", err)
 	}

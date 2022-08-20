@@ -49,7 +49,8 @@ func (tc *TelegramClient) GetMe() (*BotUser, error) {
 	if data.Ok {
 		return &data.Result, nil
 	} else if len(data.Description) > 0 {
-		return nil, errors.New(data.Description)
+		err = errors.New(data.Description)
+		return nil, fmt.Errorf("GetMe failed: %w", err)
 	}
 
 	return nil, fmt.Errorf("GetMe failed: %w", UnknownError)

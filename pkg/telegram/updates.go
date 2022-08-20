@@ -19,19 +19,22 @@ type GetUpdatesResponse struct {
 	Description string   `json:"description"`
 }
 
-func (tc *TelegramClient) GetUpdates(allowedUpdates []string) ([]Update, error) {
+// https://core.telegram.org/bots/api#getupdates
+func (tc *TelegramClient) GetUpdates(offset int, allowedUpdates []string) ([]Update, error) {
 	var resp *http.Response
 	var err error
 
+	req := IMap{}
+
 	if len(allowedUpdates) > 0 {
-		req := IMap{
-			"allowed_updates": allowedUpdates,
-		}
-		resp, err = tc.SendRequest(POST, "getUpdates", &req)
-	} else {
-		resp, err = tc.SendRequest(GET, "getUpdates", nil)
+		req["allowed_updates"] = allowedUpdates
 	}
 
+	if offset > 0 {
+		req["offset"] = offset
+	}
+
+	resp, err = tc.SendRequest(POST, "getUpdates", &req)
 	if err != nil {
 		return []Update{}, fmt.Errorf("GetUpdates failed: %w", err)
 	}

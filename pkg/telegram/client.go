@@ -62,5 +62,5 @@ func (tc *TelegramClient) SendRequest(requestMethod Request, method string, data
 		}
 		return resp, nil
 	}
-	return nil, UnknownError
+	return nil, TelegramClientError(method, UnknownError)
 }
