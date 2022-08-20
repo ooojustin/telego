@@ -53,8 +53,6 @@ func (tc *TelegramClient) SetMyCommands(commands []BotCommand, scope *IMap, lang
 		"language_code": languageCode,
 	}
 
-	fmt.Println(request)
-
 	resp, err := tc.SendRequest(POST, "setMyCommands", &request)
 	if err != nil {
 		return false, fmt.Errorf("SetMyCommands failed: %w", err)
@@ -64,6 +62,9 @@ func (tc *TelegramClient) SetMyCommands(commands []BotCommand, scope *IMap, lang
 
 	var data SetMyCommandsResponse
 	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return false, fmt.Errorf("SetMyCommands failed: %w", err)
+	}
 
 	if data.Ok {
 		return data.Result, nil
@@ -72,7 +73,7 @@ func (tc *TelegramClient) SetMyCommands(commands []BotCommand, scope *IMap, lang
 		return false, fmt.Errorf("SetMyCommands failed: %w", err)
 	}
 
-	return false, UnknownError
+	return false, fmt.Errorf("SetMyCommands failed: %w", UnknownError)
 }
 
 // https://core.telegram.org/bots/api#getmycommands
@@ -99,6 +100,9 @@ func (tc *TelegramClient) GetMyCommands(scope *IMap, languageCode string) (*[]Bo
 
 	var data GetMyCommandsResponse
 	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return nil, fmt.Errorf("GetMyCommands failed: %w", err)
+	}
 
 	if data.Ok {
 		return &data.Result, nil
@@ -107,7 +111,7 @@ func (tc *TelegramClient) GetMyCommands(scope *IMap, languageCode string) (*[]Bo
 		return nil, fmt.Errorf("GetMyCommands failed: %w", err)
 	}
 
-	return nil, UnknownError
+	return nil, fmt.Errorf("GetMyCommands failed: %w", UnknownError)
 }
 
 // https://core.telegram.org/bots/api#deletemycommands
@@ -134,6 +138,9 @@ func (tc *TelegramClient) DeleteMyCommands(scope *IMap, languageCode string) (bo
 
 	var data DeleteMyCommandsResponse
 	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return false, fmt.Errorf("DeleteMyCommands failed: %w", err)
+	}
 
 	if data.Ok {
 		return data.Result, nil
@@ -142,5 +149,5 @@ func (tc *TelegramClient) DeleteMyCommands(scope *IMap, languageCode string) (bo
 		return false, fmt.Errorf("DeleteMyCommands failed: %w", err)
 	}
 
-	return false, UnknownError
+	return false, fmt.Errorf("DeleteMyCommands failed: %w", UnknownError)
 }

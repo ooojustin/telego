@@ -3,6 +3,7 @@ package telegram
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 )
 
 // https://core.telegram.org/bots/api#user
@@ -34,7 +35,7 @@ type GetMeResponse struct {
 func (tc *TelegramClient) GetMe() (*BotUser, error) {
 	resp, err := tc.SendRequest(GET, "getMe", nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("GetMe failed: %w", err)
 	}
 
 	defer resp.Body.Close()
@@ -42,7 +43,7 @@ func (tc *TelegramClient) GetMe() (*BotUser, error) {
 	var data GetMeResponse
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("GetMe failed: %w", err)
 	}
 
 	if data.Ok {
@@ -51,5 +52,5 @@ func (tc *TelegramClient) GetMe() (*BotUser, error) {
 		return nil, errors.New(data.Description)
 	}
 
-	return nil, UnknownError
+	return nil, fmt.Errorf("GetMe failed: %w", UnknownError)
 }
