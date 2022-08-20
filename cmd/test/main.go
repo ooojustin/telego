@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ooojustin/potbot/pkg/telegram"
-	"github.com/ooojustin/potbot/pkg/utils"
+	"github.com/ooojustin/telego/pkg/telegram"
+	"github.com/ooojustin/telego/pkg/utils"
 )
 
 func main() {
@@ -26,6 +26,9 @@ func main() {
 		meStr := string(meBytes)
 		fmt.Println(meStr)
 	}
+
+	updates, _ := client.GetUpdates([]string{})
+	fmt.Println(updates)
 }
 
 func exitf(code int, format string, a ...interface{}) {

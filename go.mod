@@ -1,4 +1,4 @@
-module github.com/ooojustin/potbot
+module github.com/ooojustin/telego
 
 go 1.17
 
