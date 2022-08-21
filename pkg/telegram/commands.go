@@ -20,21 +20,18 @@ type BotCommand struct {
 }
 
 type SetMyCommandsResponse struct {
-	Ok          bool   `json:"ok"`
-	Result      bool   `json:"result"`
-	Description string `json:"description"`
+	TelegramResponse
+	Result bool `json:"result"`
 }
 
 type GetMyCommandsResponse struct {
-	Ok          bool         `json:"ok"`
-	Result      []BotCommand `mapstructure:"result"`
-	Description string       `json:"description"`
+	TelegramResponse
+	Result []BotCommand `json:"result"`
 }
 
 type DeleteMyCommandsResponse struct {
-	Ok          bool   `json:"ok"`
-	Result      bool   `json:"result"`
-	Description string `json:"description"`
+	TelegramResponse
+	Result bool `json:"result"`
 }
 
 // https://core.telegram.org/bots/api#setmycommands

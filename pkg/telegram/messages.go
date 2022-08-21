@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
-	"github.com/ooojustin/telego/pkg/utils"
 )
 
 // https://core.telegram.org/bots/api#message
@@ -27,6 +25,10 @@ func (tc *TelegramClient) SendMessage(chat int, text string, replyMarkup *IMap) 
 	request := IMap{
 		"chat_id": chat,
 		"text":    text,
+	}
+
+	if replyMarkup != nil {
+		request["reply_markup"] = *replyMarkup
 	}
 
 	resp, err := tc.SendRequest(POST, "sendMessage", &request)

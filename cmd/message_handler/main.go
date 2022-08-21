@@ -15,5 +15,8 @@ func main() {
 
 	client := telegram.NewTelegramClient(cfg.TelegramToken)
 
-	client.StartUpdateHandler(10*time.Second, []string{"message"})
+	interval := time.Second * 10
+	updateTypes := []string{"message", "callback_query"}
+
+	client.StartUpdateHandler(interval, updateTypes)
 }
