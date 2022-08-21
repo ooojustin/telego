@@ -30,6 +30,11 @@ type TelegramClient struct {
 	Token string `json:"token"`
 }
 
+type TelegramResponse struct {
+	Ok          bool   `json:"ok"`
+	Description string `json:"description"`
+}
+
 func NewTelegramClient(token string) *TelegramClient {
 	return &TelegramClient{
 		Token: token,
