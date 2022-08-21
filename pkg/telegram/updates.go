@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/ooojustin/telego/pkg/utils"
 )
 
 // https://core.telegram.org/bots/api#update
@@ -96,5 +98,11 @@ func (tc *TelegramClient) UpdateHandler(interval time.Duration, allowedUpdates [
 }
 
 func (tc *TelegramClient) HandleUpdate(update Update) {
-	fmt.Printf("HandleUpdate: %d, @%s: %s\n", update.ID, update.Message.From.Username, update.Message.Text)
+	data := IMap{
+		"update_id": update.ID,
+		"chat_id":   update.Message.Chat.ID,
+		"username":  update.Message.From.Username,
+		"text":      update.Message.Text,
+	}
+	utils.PrettyPrint(data)
 }
