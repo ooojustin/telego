@@ -14,14 +14,14 @@ import (
 
 // https://core.telegram.org/bots/api#update
 type Update struct {
-	ID      int     `json:"update_id"`
-	Message Message `mapstructure:"message"`
+	ID            int            `json:"update_id" mapstructure:"update_id"`
+	Message       *Message       `json:"message,omitempty" mapstructure:"message,omitempty"`
+	CallbackQuery *CallbackQuery `json:"callback_query,omitempty" mapstructure:"callback_query,omitempty"`
 }
 
 type GetUpdatesResponse struct {
-	Ok          bool     `json:"ok"`
-	Result      []Update `mapstructure:"result"`
-	Description string   `json:"description"`
+	TelegramResponse
+	Result []Update `json:"result"`
 }
 
 // https://core.telegram.org/bots/api#getupdates

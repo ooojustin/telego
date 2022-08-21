@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
+	"github.com/ooojustin/telego/pkg/utils"
 )
 
 // https://core.telegram.org/bots/api#message
@@ -18,10 +20,10 @@ type Message struct {
 
 type SendMessageResponse struct {
 	TelegramResponse
-	Result Message `mapstructure:"result"`
+	Result Message `json:"result"`
 }
 
-func (tc *TelegramClient) SendMessage(chat int, text string) (*Message, error) {
+func (tc *TelegramClient) SendMessage(chat int, text string, replyMarkup *IMap) (*Message, error) {
 	request := IMap{
 		"chat_id": chat,
 		"text":    text,

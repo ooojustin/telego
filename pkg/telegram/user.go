@@ -26,9 +26,8 @@ type BotUser struct {
 }
 
 type GetMeResponse struct {
-	Ok          bool    `json:"ok"`
-	Result      BotUser `mapstructure:"result"`
-	Description string  `json:"description"`
+	TelegramResponse
+	Result BotUser `json:"result"`
 }
 
 // https://core.telegram.org/bots/api#getme
