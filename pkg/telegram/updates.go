@@ -9,7 +9,14 @@ import (
 	"os"
 	"time"
 
+	"github.com/mitchellh/mapstructure"
 	"github.com/ooojustin/telego/pkg/utils"
+	"golang.org/x/exp/maps"
+)
+
+var (
+	UnhandledUpdateError error = errors.New("Unhandled update type.")
+	BadUpdateError       error = errors.New("Received update with unexpected conditions.")
 )
 
 // https://core.telegram.org/bots/api#update
@@ -97,12 +104,38 @@ func (tc *TelegramClient) UpdateHandler(interval time.Duration, allowedUpdates [
 	}
 }
 
-func (tc *TelegramClient) HandleUpdate(update Update) {
-	data := IMap{
-		"update_id": update.ID,
-		"chat_id":   update.Message.Chat.ID,
-		"username":  update.Message.From.Username,
-		"text":      update.Message.Text,
+func (tc *TelegramClient) HandleUpdate(update Update) error {
+	var data IMap
+	mapstructure.Decode(update, &data)
+
+	keys := maps.Keys[IMap](data)
+	hasID := utils.Contains[string](keys, "update_id")
+
+	if len(keys) != 2 || !hasID {
+		return BadUpdateError
 	}
-	utils.PrettyPrint(data)
+
+	updateType := utils.Remove[string](keys, "update_id")[0]
+
+	updateHandlers := IMap{
+		"message":        tc.HandleMessage,
+		"callback_query": tc.HandleCallbackQuery,
+	}
+
+	if vfunc, ok := updateHandlers[updateType]; ok {
+		funcName := utils.GetFunctionName(vfunc)
+		updateStr, _ := utils.GetPrettyJSON(update)
+		fmt.Printf("Sending update to %s: %s\n", funcName, updateStr)
+		return vfunc.((func(Update) error))(update)
+	} else {
+		return UnhandledUpdateError
+	}
+}
+
+func (tc *TelegramClient) HandleMessage(update Update) error {
+	return nil
+}
+
+func (tc *TelegramClient) HandleCallbackQuery(update Update) error {
+	return nil
 }
