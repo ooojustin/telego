@@ -4,13 +4,23 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"reflect"
+    "runtime"
+	"strings"
 )
 
-func PrettyPrint(o interface{}) {
+func GetPrettyJSON(o interface{}) (string, error) {
 	obytes, err := json.MarshalIndent(o, "", "	")
+	if err != nil {
+		return "", err
+	}
+	return string(obytes), nil
+}
+
+func PrettyPrint(o interface{}) {
+	str, err := GetPrettyJSON(o)
 	if err == nil {
-		ostr := string(obytes)
-		fmt.Println(ostr)
+		fmt.Println(str)
 	} else {
 		fmt.Printf("Failed to prettyPrint: %s\n", err)
 	}
@@ -37,4 +47,10 @@ func Remove[T comparable](haystack []T, needle T) []T {
         }
     }
     return haystack
+}
+
+func GetFunctionName(i interface{}) string {
+	nameFull := runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
+	parts := strings.Split(nameFull, ".")
+	return parts[len(parts) - 1]
 }
