@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/mitchellh/mapstructure"
 	"github.com/ooojustin/telego/pkg/telegram"
 	"github.com/ooojustin/telego/pkg/utils"
 )
@@ -23,7 +24,8 @@ func main() {
 
 	// testGetMe()
 	// testGetUpdates()
-	testSendMessage()
+	// testSendMessage()
+	testSendMessageWithButton()
 }
 
 func testGetMe() {
@@ -45,7 +47,30 @@ func testGetUpdates() {
 }
 
 func testSendMessage() {
-	message, err := client.SendMessage(JustinChatID, "test")
+	message, err := client.SendMessage(JustinChatID, "test", nil)
+	if err != nil {
+		utils.Exitf(0, "testSendMessage failed: %s", err)
+	}
+
+	utils.PrettyPrint(message)
+}
+
+func testSendMessageWithButton() {
+	ikm := telegram.InlineKeyboardMarkup{
+		Keyboard: [][]telegram.InlineKeyboardButton{
+			{
+				{
+					Text:         "a button!",
+					CallbackData: "button pressed",
+				},
+			},
+		},
+	}
+
+	var markup telegram.IMap
+	mapstructure.Decode(ikm, &markup)
+
+	message, err := client.SendMessage(JustinChatID, "test", &markup)
 	if err != nil {
 		utils.Exitf(0, "testSendMessage failed: %s", err)
 	}
