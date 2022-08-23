@@ -59,10 +59,7 @@ func testSendMessageWithButton() {
 	ikm := telegram.InlineKeyboardMarkup{
 		Keyboard: [][]telegram.InlineKeyboardButton{
 			{
-				{
-					Text:         "a button!",
-					CallbackData: "button pressed",
-				},
+				telegram.CreateCallbackButton("a button", "button pressed"),
 			},
 		},
 	}

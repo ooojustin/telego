@@ -20,3 +20,17 @@ type CallbackQuery struct {
 	ChatID  string  `json:"chat_instance"`
 	Data    string  `json:"data"`
 }
+
+func CreateLinkButton(text string, url string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text: text,
+		Url:  url,
+	}
+}
+
+func CreateCallbackButton(text string, data string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:         text,
+		CallbackData: data,
+	}
+}
