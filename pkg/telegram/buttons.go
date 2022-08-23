@@ -1,5 +1,9 @@
 package telegram
 
+import (
+	"math"
+)
+
 // https://core.telegram.org/bots/api#inlinekeyboardmarkup
 type InlineKeyboardMarkup struct {
 	Keyboard [][]InlineKeyboardButton `mapstructure:"inline_keyboard" json:"inline_keyboard"`
@@ -33,4 +37,28 @@ func CreateCallbackButton(text string, data string) InlineKeyboardButton {
 		Text:         text,
 		CallbackData: data,
 	}
+}
+
+func CreateButtons(perRow int, buttons ...InlineKeyboardButton) InlineKeyboardMarkup {
+	btnCount := len(buttons)
+	btnsPerRow := float64(btnCount) / float64(perRow)
+	rows := int(math.Ceil(btnsPerRow))
+
+	keyboard := [][]InlineKeyboardButton{}
+	for idx := 0; idx < rows; idx++ {
+		if btnCount >= perRow {
+			// add row with the first 'perRow' buttons
+			row := buttons[:perRow]
+			keyboard = append(keyboard, row)
+
+			// remove used buttons, update count
+			buttons = buttons[perRow:]
+			btnCount = len(buttons)
+		} else {
+			// add final row of buttons
+			keyboard = append(keyboard, buttons)
+		}
+	}
+
+	return InlineKeyboardMarkup{Keyboard: keyboard}
 }

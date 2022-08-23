@@ -25,7 +25,7 @@ func main() {
 	// testGetMe()
 	// testGetUpdates()
 	// testSendMessage()
-	testSendMessageWithButton()
+	testSendMessageWithButtons()
 }
 
 func testGetMe() {
@@ -55,14 +55,15 @@ func testSendMessage() {
 	utils.PrettyPrint(message)
 }
 
-func testSendMessageWithButton() {
-	ikm := telegram.InlineKeyboardMarkup{
-		Keyboard: [][]telegram.InlineKeyboardButton{
-			{
-				telegram.CreateCallbackButton("a button", "button pressed"),
-			},
-		},
-	}
+func testSendMessageWithButtons() {
+	ikm := telegram.CreateButtons(
+		2,
+		telegram.CreateCallbackButton("a button 1", "button 1 pressed"),
+		telegram.CreateCallbackButton("a button 2", "button 2 pressed"),
+		telegram.CreateCallbackButton("a button 3", "button 3 pressed"),
+		telegram.CreateCallbackButton("a button 4", "button 4 pressed"),
+		telegram.CreateLinkButton("justin.ooo", "https://justin.ooo/"),
+	)
 
 	var markup telegram.IMap
 	mapstructure.Decode(ikm, &markup)
