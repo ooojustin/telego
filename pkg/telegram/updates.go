@@ -14,9 +14,12 @@ import (
 	"golang.org/x/exp/maps"
 )
 
+type UpdateHandler func(Update) error
+
 var (
-	UnhandledUpdateError error = errors.New("Unhandled update type.")
-	BadUpdateError       error = errors.New("Received update with unexpected conditions.")
+	UnhandledUpdateError  error = errors.New("Unhandled update type.")
+	UnhandledCommandError error = errors.New("Unhandled command received.")
+	BadUpdateError        error = errors.New("Received update with unexpected conditions.")
 )
 
 // https://core.telegram.org/bots/api#update
@@ -108,14 +111,14 @@ func (tc *TelegramClient) HandleUpdate(update Update) error {
 	var data IMap
 	mapstructure.Decode(update, &data)
 
-	keys := maps.Keys[IMap](data)
-	hasID := utils.Contains[string](keys, "update_id")
+	keys := maps.Keys(data)
+	hasID := utils.Contains(keys, "update_id")
 
 	if len(keys) != 2 || !hasID {
 		return BadUpdateError
 	}
 
-	updateType := utils.Remove[string](keys, "update_id")[0]
+	updateType := utils.Remove(keys, "update_id")[0]
 
 	updateHandlers := IMap{
 		"message":        tc.HandleMessage,
@@ -133,6 +136,15 @@ func (tc *TelegramClient) HandleUpdate(update Update) error {
 }
 
 func (tc *TelegramClient) HandleMessage(update Update) error {
+	isCommand := update.Message.Text[0:1] == "/"
+	if isCommand {
+		command := update.Message.Text[1:]
+		if handler, ok := tc.Commands[command]; ok {
+			return handler(update)
+		} else {
+			return UnhandledCommandError
+		}
+	}
 	return nil
 }
 

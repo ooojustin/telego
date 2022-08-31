@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/ooojustin/telego/pkg/telegram"
@@ -15,8 +16,15 @@ func main() {
 
 	client := telegram.NewTelegramClient(cfg.TelegramToken)
 
+	client.RegisterCommandHandler("test", testCommandHandler)
+
 	interval := time.Second * 10
 	updateTypes := []string{"message", "callback_query"}
 
 	client.StartUpdateHandler(interval, updateTypes)
+}
+
+func testCommandHandler(update telegram.Update) error {
+	fmt.Println("test command executed!")
+	return nil
 }

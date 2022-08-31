@@ -148,3 +148,7 @@ func (tc *TelegramClient) DeleteMyCommands(scope *IMap, languageCode string) (bo
 
 	return false, fmt.Errorf("DeleteMyCommands failed: %w", UnknownError)
 }
+
+func (tc *TelegramClient) RegisterCommandHandler(command string, handler UpdateHandler) {
+	tc.Commands[command] = handler
+}
