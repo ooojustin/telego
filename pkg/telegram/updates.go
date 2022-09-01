@@ -96,7 +96,9 @@ func (tc *TelegramClient) UpdateHandler(interval time.Duration, allowedUpdates [
 			if err == nil {
 				lastIdx := len(updates) - 1
 				for idx, update := range updates {
-					tc.HandleUpdate(update)
+					if err := tc.HandleUpdate(update); err != nil {
+						fmt.Printf("Error handling update %d: %s", update.ID, err)
+					}
 					if idx == lastIdx {
 						offset = update.ID + 1
 					}
@@ -129,8 +131,7 @@ func (tc *TelegramClient) HandleUpdate(update Update) error {
 
 	if vfunc, ok := updateHandlers[updateType]; ok {
 		funcName := utils.GetFunctionName(vfunc)
-		updateStr, _ := utils.GetPrettyJSON(update)
-		fmt.Printf("Sending update to %s: %s\n", funcName, updateStr)
+		fmt.Printf("Sending update %d to %s.\n", update.ID, funcName)
 		return vfunc.((func(Update) error))(update)
 	} else {
 		return UnhandledUpdateError
