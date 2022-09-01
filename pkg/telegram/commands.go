@@ -150,5 +150,9 @@ func (tc *TelegramClient) DeleteMyCommands(scope *IMap, languageCode string) (bo
 }
 
 func (tc *TelegramClient) RegisterCommandHandler(command string, handler UpdateHandler) {
-	tc.Commands[command] = handler
+	tc.CommandHandlers[command] = handler
+}
+
+func (tc *TelegramClient) RegisterCallbackQueryHandler(dataPattern string, handler CallbackQueryHandler) {
+	tc.CallbackQueryHandlers[dataPattern] = handler
 }

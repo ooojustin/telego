@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"regexp"
 	"time"
 
 	"github.com/mitchellh/mapstructure"
@@ -15,6 +16,7 @@ import (
 )
 
 type UpdateHandler func(Update) error
+type CallbackQueryHandler func(Update, []string) error
 
 var (
 	UnhandledUpdateError  error = errors.New("Unhandled update type.")
@@ -111,14 +113,14 @@ func (tc *TelegramClient) HandleUpdate(update Update) error {
 	var data IMap
 	mapstructure.Decode(update, &data)
 
-	keys := maps.Keys(data)
-	hasID := utils.Contains(keys, "update_id")
+	keys := maps.Keys[IMap](data)
+	hasID := utils.Contains[string](keys, "update_id")
 
 	if len(keys) != 2 || !hasID {
 		return BadUpdateError
 	}
 
-	updateType := utils.Remove(keys, "update_id")[0]
+	updateType := utils.Remove[string](keys, "update_id")[0]
 
 	updateHandlers := IMap{
 		"message":        tc.HandleMessage,
@@ -139,7 +141,7 @@ func (tc *TelegramClient) HandleMessage(update Update) error {
 	isCommand := update.Message.Text[0:1] == "/"
 	if isCommand {
 		command := update.Message.Text[1:]
-		if handler, ok := tc.Commands[command]; ok {
+		if handler, ok := tc.CommandHandlers[command]; ok {
 			return handler(update)
 		} else {
 			return UnhandledCommandError
@@ -149,5 +151,13 @@ func (tc *TelegramClient) HandleMessage(update Update) error {
 }
 
 func (tc *TelegramClient) HandleCallbackQuery(update Update) error {
+	data := update.CallbackQuery.Data
+	for patternStr, handler := range tc.CallbackQueryHandlers {
+		if pattern, err := regexp.Compile(patternStr); err == nil {
+			if groups := pattern.FindStringSubmatch(data); groups != nil {
+				return handler(update, groups)
+			}
+		}
+	}
 	return nil
 }
