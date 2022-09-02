@@ -29,6 +29,7 @@ func main() {
 	// testSendMessage()
 	// testSendMessageWithButtons()
 	// testSetWebhook()
+	// testDeleteWebhook()
 	testGetWebhookInfo()
 }
 
@@ -82,7 +83,7 @@ func testSendMessageWithButtons() {
 
 func testSetWebhook() {
 	updateTypes := []string{"message", "callback_query"}
-	url := "https://api.sellegram.net/telegram/webhook"
+	url := "https://api.sellegram.net/webhook/telegram"
 	token := "512a0f59-81b8-4648-9ab6-c312765b31c1"
 	if err := client.SetWebhook(url, updateTypes, token); err != nil {
 		fmt.Println(err)
@@ -97,5 +98,13 @@ func testGetWebhookInfo() {
 	} else {
 		prettyInfoStr, _ := utils.GetPrettyJSON(info)
 		fmt.Printf("GetWebhookInfo: %s\n", prettyInfoStr)
+	}
+}
+
+func testDeleteWebhook() {
+	if err := client.DeleteWebhook(false); err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("deleteWebhook successful.")
 	}
 }

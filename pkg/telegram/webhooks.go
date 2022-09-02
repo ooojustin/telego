@@ -29,6 +29,11 @@ type GetWebhookInfoResponse struct {
 	Result WebhookInfo `json:"result"`
 }
 
+type DeleteWebhookResponse struct {
+	TelegramResponse
+	Result bool `json:"result"`
+}
+
 func (tc *TelegramClient) SetWebhook(url string, allowedUpdates []string, secretToken string) error {
 	var resp *http.Response
 	var err error
@@ -88,4 +93,33 @@ func (tc *TelegramClient) GetWebhookInfo() (*WebhookInfo, error) {
 	}
 
 	return nil, fmt.Errorf("GetWebhookInfo failed: %w", UnknownError)
+}
+
+func (tc *TelegramClient) DeleteWebhook(dropPendingUpdates bool) error {
+	var resp *http.Response
+	var err error
+
+	req := IMap{"drop_pending_updates": dropPendingUpdates}
+
+	resp, err = tc.SendRequest(POST, "deleteWebhook", &req)
+	if err != nil {
+		return fmt.Errorf("DeleteWebhook failed: %w", err)
+	}
+
+	defer resp.Body.Close()
+
+	var data DeleteWebhookResponse
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return fmt.Errorf("DeleteWebhook failed: %w", err)
+	}
+
+	if data.Ok {
+		return nil
+	} else if len(data.Description) > 0 {
+		err = errors.New(data.Description)
+		return fmt.Errorf("DeleteWebhook failed: %w", err)
+	}
+
+	return fmt.Errorf("DeleteWebhook failed: %w", UnknownError)
 }
