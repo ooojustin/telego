@@ -15,8 +15,10 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-type UpdateHandler func(Update) error
-type CallbackQueryHandler func(Update, []string) error
+type (
+	UpdateHandler        func(Update) error
+	CallbackQueryHandler func(Update, []string) error
+)
 
 var (
 	UnhandledUpdateError  error = errors.New("Unhandled update type.")

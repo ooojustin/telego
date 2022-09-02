@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/mitchellh/mapstructure"
 	"github.com/ooojustin/telego/pkg/telegram"
 	"github.com/ooojustin/telego/pkg/utils"
@@ -25,7 +27,9 @@ func main() {
 	// testGetMe()
 	// testGetUpdates()
 	// testSendMessage()
-	testSendMessageWithButtons()
+	// testSendMessageWithButtons()
+	// testSetWebhook()
+	testGetWebhookInfo()
 }
 
 func testGetMe() {
@@ -74,4 +78,24 @@ func testSendMessageWithButtons() {
 	}
 
 	utils.PrettyPrint(message)
+}
+
+func testSetWebhook() {
+	updateTypes := []string{"message", "callback_query"}
+	url := "https://api.sellegram.net/telegram/webhook"
+	token := "512a0f59-81b8-4648-9ab6-c312765b31c1"
+	if err := client.SetWebhook(url, updateTypes, token); err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("setWebhook successful.")
+	}
+}
+
+func testGetWebhookInfo() {
+	if info, err := client.GetWebhookInfo(); err != nil {
+		fmt.Println(err)
+	} else {
+		prettyInfoStr, _ := utils.GetPrettyJSON(info)
+		fmt.Printf("GetWebhookInfo: %s\n", prettyInfoStr)
+	}
 }
