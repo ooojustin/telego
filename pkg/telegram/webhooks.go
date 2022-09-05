@@ -34,11 +34,14 @@ type DeleteWebhookResponse struct {
 	Result bool `json:"result"`
 }
 
-func (tc *TelegramClient) SetWebhook(url string, allowedUpdates []string, secretToken string) error {
+func (tc *TelegramClient) SetWebhook(url string, allowedUpdates []string, secretToken string, dropPendingUpdates bool) error {
 	var resp *http.Response
 	var err error
 
-	req := IMap{"url": url}
+	req := IMap{
+		"url":                  url,
+		"drop_pending_updates": dropPendingUpdates,
+	}
 
 	if len(allowedUpdates) > 0 {
 		req["allowed_updates"] = allowedUpdates

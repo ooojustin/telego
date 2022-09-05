@@ -85,7 +85,7 @@ func testSetWebhook() {
 	updateTypes := []string{"message", "callback_query"}
 	url := "https://api.sellegram.net/webhook/telegram"
 	token := "512a0f59-81b8-4648-9ab6-c312765b31c1"
-	if err := client.SetWebhook(url, updateTypes, token); err != nil {
+	if err := client.SetWebhook(url, updateTypes, token, false); err != nil {
 		fmt.Println(err)
 	} else {
 		fmt.Println("setWebhook successful.")
