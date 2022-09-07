@@ -33,6 +33,21 @@ type Update struct {
 	CallbackQuery *CallbackQuery `json:"callback_query,omitempty" mapstructure:"callback_query,omitempty"`
 }
 
+func (u Update) GetType() (string, bool) {
+	var data IMap
+	mapstructure.Decode(u, &data)
+
+	keys := maps.Keys[IMap](data)
+	hasID := utils.Contains[string](keys, "update_id")
+
+	if len(keys) != 2 || !hasID {
+		return "", false
+	}
+
+	updateType := utils.Remove[string](keys, "update_id")[0]
+	return updateType, true
+}
+
 type GetUpdatesResponse struct {
 	TelegramResponse
 	Result []Update `json:"result"`
@@ -114,17 +129,10 @@ func (tc *TelegramClient) UpdateHandler(interval time.Duration, allowedUpdates [
 }
 
 func (tc *TelegramClient) HandleUpdate(update Update) error {
-	var data IMap
-	mapstructure.Decode(update, &data)
-
-	keys := maps.Keys[IMap](data)
-	hasID := utils.Contains[string](keys, "update_id")
-
-	if len(keys) != 2 || !hasID {
+	updateType, ok := update.GetType()
+	if !ok {
 		return BadUpdateError
 	}
-
-	updateType := utils.Remove[string](keys, "update_id")[0]
 
 	updateHandlers := IMap{
 		"message":        tc.HandleMessage,
