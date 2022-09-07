@@ -147,13 +147,13 @@ func (tc *TelegramClient) HandleUpdate(update Update) error {
 }
 
 func (tc *TelegramClient) HandleMessage(update Update) error {
-	isCommand := update.Message.Text[0:1] == "/"
-	if isCommand {
-		command := update.Message.Text[1:]
+	text := update.Message.Text
+	if text[:1] == "/" && len(text) > 1 {
+		command := text[1:]
 		if handler, ok := tc.CommandHandlers[command]; ok {
 			return handler(update)
 		} else {
-			return UnhandledCommandError
+			return fmt.Errorf("%w Message text: '%s'", UnhandledCommandError, text)
 		}
 	}
 	return nil
