@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"regexp"
-	"strings"
 	"time"
 
 	"github.com/mitchellh/mapstructure"
@@ -150,7 +149,8 @@ func (tc *TelegramClient) HandleUpdate(update Update) error {
 }
 
 func (tc *TelegramClient) HandleMessage(update Update) error {
-	if strings.HasPrefix(update.Message.Text, "/") {
+	isCommand := update.Message.Text[0:1] == "/"
+	if isCommand {
 		command := update.Message.Text[1:]
 		if handler, ok := tc.CommandHandlers[command]; ok {
 			return handler(update)
