@@ -2,7 +2,14 @@
 Telegram Bot API Wrapper written in Go.
 
 ### Getting Started
-The `TelegramClient` and other Telegram related types are exposed via the 'telegram' package.
+
+Install the package by executing the following command:
+
+```
+$ go get github.com/ooojustin/telego
+```
+
+The `TelegramClient` and other Telegram related types are exposed via the `telegram` package.
 
 ```go
 import "github.com/ooojustin/telego/pkg/telegram"
