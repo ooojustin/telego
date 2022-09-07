@@ -22,3 +22,6 @@ go.work
 
 # Configuration file
 *.json
+
+# Console app for testing functionality of telegram client
+/cmd/test
