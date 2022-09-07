@@ -134,15 +134,13 @@ func (tc *TelegramClient) HandleUpdate(update Update) error {
 		return BadUpdateError
 	}
 
-	updateHandlers := IMap{
+	updateHandlers := map[string]UpdateHandler{
 		"message":        tc.HandleMessage,
 		"callback_query": tc.HandleCallbackQuery,
 	}
 
-	if vfunc, ok := updateHandlers[updateType]; ok {
-		funcName := utils.GetFunctionName(vfunc)
-		fmt.Printf("Sending update %d to %s.\n", update.ID, funcName)
-		return vfunc.((func(Update) error))(update)
+	if handler, ok := updateHandlers[updateType]; ok {
+		return handler(update)
 	} else {
 		return UnhandledUpdateError
 	}
