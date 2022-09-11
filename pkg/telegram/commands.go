@@ -149,10 +149,26 @@ func (tc *TelegramClient) DeleteMyCommands(scope *IMap, languageCode string) (bo
 	return false, fmt.Errorf("DeleteMyCommands failed: %w", UnknownError)
 }
 
-func (tc *TelegramClient) RegisterCommandHandler(command string, handler UpdateHandler) {
+func (tc *TelegramClient) RegisterCommandHandler(command string, handler UpdateHandler, description string) {
 	tc.CommandHandlers[command] = handler
+	if len(description) > 0 {
+		tc.CommandDescriptions[command] = description
+	} else {
+		tc.CommandDescriptions[command] = "[no description provided]"
+	}
 }
 
 func (tc *TelegramClient) RegisterCallbackQueryHandler(dataPattern string, handler CallbackQueryHandler) {
 	tc.CallbackQueryHandlers[dataPattern] = handler
+}
+
+func (tc *TelegramClient) GetBotCommands() []BotCommand {
+	var commands []BotCommand
+	for command, description := range tc.CommandDescriptions {
+		commands = append(commands, BotCommand{
+			Command:     command,
+			Description: description,
+		})
+	}
+	return commands
 }

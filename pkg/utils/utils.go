@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-    "runtime"
+	"runtime"
 	"strings"
 )
 
@@ -41,16 +41,16 @@ func Contains[T comparable](haystack []T, needle T) bool {
 }
 
 func Remove[T comparable](haystack []T, needle T) []T {
-    for idx, item := range haystack {
-        if item == needle {
-            return append(haystack[:idx], haystack[idx+1:]...)
-        }
-    }
-    return haystack
+	for idx, item := range haystack {
+		if item == needle {
+			return append(haystack[:idx], haystack[idx+1:]...)
+		}
+	}
+	return haystack
 }
 
 func GetFunctionName(i interface{}) string {
 	nameFull := runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
 	parts := strings.Split(nameFull, ".")
-	return parts[len(parts) - 1]
+	return parts[len(parts)-1]
 }

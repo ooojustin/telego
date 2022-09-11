@@ -29,6 +29,7 @@ var (
 type TelegramClient struct {
 	Token                 string                          `json:"token"`
 	CommandHandlers       map[string]UpdateHandler        `json:"-"`
+	CommandDescriptions   map[string]string               `json:"-"`
 	CallbackQueryHandlers map[string]CallbackQueryHandler `json:"-"`
 }
 
@@ -41,6 +42,7 @@ func NewTelegramClient(token string) *TelegramClient {
 	return &TelegramClient{
 		Token:                 token,
 		CommandHandlers:       make(map[string]UpdateHandler),
+		CommandDescriptions:   make(map[string]string),
 		CallbackQueryHandlers: make(map[string]CallbackQueryHandler),
 	}
 }
