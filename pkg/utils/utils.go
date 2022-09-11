@@ -54,3 +54,7 @@ func GetFunctionName(i interface{}) string {
 	parts := strings.Split(nameFull, ".")
 	return parts[len(parts)-1]
 }
+
+func IsNil(i interface{}) bool {
+	return i == nil || reflect.ValueOf(i).IsNil()
+}

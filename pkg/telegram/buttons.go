@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"math"
+
+	"github.com/ooojustin/telego/pkg/utils"
 )
 
 type MenuButtonType string
@@ -100,16 +102,20 @@ func CreateButtons(perRow int, buttons ...InlineKeyboardButton) InlineKeyboardMa
 	return InlineKeyboardMarkup{Keyboard: keyboard}
 }
 
+func (tc *TelegramClient) DeleteChatMenuButton(chatId *int) error {
+	return _setChatMenuButton(tc, chatId, nil)
+}
+
 func (tc *TelegramClient) SetChatMenuButton(chatId *int, mbType MenuButtonType) error {
 	menuButton := MenuButton{Type: mbType}
-	return _setChatMenuButton(tc, chatId, menuButton)
+	return _setChatMenuButton(tc, chatId, &menuButton)
 }
 
 func (tc *TelegramClient) SetChatWebAppMenuButton(chatId *int, menuButton MenuButtonWebApp) error {
 	menuButton.MenuButton = MenuButton{
 		Type: MENU_BUTTON_WEB_APP,
 	}
-	return _setChatMenuButton(tc, chatId, menuButton)
+	return _setChatMenuButton(tc, chatId, &menuButton)
 }
 
 func (tc *TelegramClient) GetChatMenuButton(chatId *int) (IMap, MenuButtonType, error) {
@@ -151,8 +157,10 @@ func (tc *TelegramClient) GetChatMenuButton(chatId *int) (IMap, MenuButtonType, 
 }
 
 func _setChatMenuButton(tc *TelegramClient, chatId *int, menuButton interface{}) error {
-	request := IMap{
-		"menu_button": menuButton,
+	request := IMap{}
+
+	if !utils.IsNil(menuButton) {
+		request["menu_button"] = menuButton
 	}
 
 	if chatId != nil {
