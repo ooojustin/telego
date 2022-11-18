@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/mitchellh/mapstructure"
@@ -164,6 +165,7 @@ func (tc *TelegramClient) HandleCallbackQuery(update Update) error {
 	for patternStr, handler := range tc.CallbackQueryHandlers {
 		if pattern, err := regexp.Compile(patternStr); err == nil {
 			if groups := pattern.FindStringSubmatch(data); groups != nil {
+				fmt.Printf("telego groups: %s\n", strings.Join(groups, ","))
 				return handler(update, groups)
 			}
 		}
