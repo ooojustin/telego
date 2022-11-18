@@ -166,6 +166,7 @@ func (tc *TelegramClient) HandleCallbackQuery(update Update) error {
 		if pattern, err := regexp.Compile(patternStr); err == nil {
 			if groups := pattern.FindStringSubmatch(data); groups != nil {
 				fmt.Printf("telego groups: %s\n", strings.Join(groups, ","))
+				fmt.Printf("telego handler nil: %t\n", handler == nil)
 				return handler(update, groups)
 			}
 		}
