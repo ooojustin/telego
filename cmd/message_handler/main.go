@@ -19,7 +19,7 @@ func main() {
 
 	client = telegram.NewTelegramClient(cfg.TelegramToken)
 
-	client.RegisterCommandHandler("ping", pingHandler, "ping command")
+	client.RegisterCommandHandler("ping", pingHandler)
 	client.RegisterCallbackQueryHandler(`button (\d+) pressed`, btnPressHandler)
 
 	interval := time.Second * 10
