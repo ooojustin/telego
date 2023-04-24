@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// https://core.telegram.org/bots/api#sending-files
 // https://core.telegram.org/bots/api#senddocument
 func (tc *TelegramClient) SendDocument(chat int, document string, caption string, replyMarkup *IMap) (*Message, error) {
 	request := IMap{"chat_id": chat}

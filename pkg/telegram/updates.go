@@ -48,6 +48,16 @@ func (u Update) GetType() (string, bool) {
 	return updateType, true
 }
 
+func (u Update) GetFromID() int {
+	if u.Message != nil {
+		return u.Message.From.ID
+	}
+	if u.CallbackQuery != nil {
+		return u.CallbackQuery.From.ID
+	}
+	return -1
+}
+
 type GetUpdatesResponse struct {
 	TelegramResponse
 	Result []Update `json:"result"`
