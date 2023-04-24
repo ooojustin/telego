@@ -21,14 +21,16 @@ type SendMessageResponse struct {
 	Result Message `json:"result"`
 }
 
-func (tc *TelegramClient) SendMessage(chat int, text string, replyMarkup *IMap) (*Message, error) {
+func (tc *TelegramClient) SendMessage(chat int, text string, data *IMap) (*Message, error) {
 	request := IMap{
 		"chat_id": chat,
 		"text":    text,
 	}
 
-	if replyMarkup != nil {
-		request["reply_markup"] = *replyMarkup
+	if data != nil {
+		for k, v := range *data {
+			request[k] = v
+		}
 	}
 
 	resp, err := tc.SendRequest(POST, "sendMessage", &request)
@@ -38,16 +40,16 @@ func (tc *TelegramClient) SendMessage(chat int, text string, replyMarkup *IMap) 
 
 	defer resp.Body.Close()
 
-	var data SendMessageResponse
+	var smr SendMessageResponse
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, fmt.Errorf("SendMessage failed: %w", err)
 	}
 
-	if data.Ok {
-		return &data.Result, nil
-	} else if len(data.Description) > 0 {
-		err = errors.New(data.Description)
+	if smr.Ok {
+		return &smr.Result, nil
+	} else if len(smr.Description) > 0 {
+		err = errors.New(smr.Description)
 		return nil, fmt.Errorf("SendMessage failed: %w", err)
 	}
 
