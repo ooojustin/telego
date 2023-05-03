@@ -6,6 +6,11 @@ import (
 	"fmt"
 )
 
+type SendDocumentResponse struct {
+	TelegramResponse
+	Result Message `json:"result"`
+}
+
 // https://core.telegram.org/bots/api#sending-files
 // https://core.telegram.org/bots/api#senddocument
 func (tc *TelegramClient) SendDocument(chat int, document string, caption string, replyMarkup *IMap) (*Message, error) {
@@ -25,7 +30,7 @@ func (tc *TelegramClient) SendDocument(chat int, document string, caption string
 
 	defer resp.Body.Close()
 
-	var data SendMessageResponse
+	var data SendDocumentResponse
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, fmt.Errorf("SendDocument failed: %w", err)
