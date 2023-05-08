@@ -17,7 +17,7 @@ var (
 type BotCommand struct {
 	Command     string `json:"command"`     // Max 32 chars
 	Description string `json:"description"` // Max 256 chars
-	IsCategory  bool   `json:"category"`
+	IsCategory  bool   `json:"-"`
 }
 
 type SetMyCommandsResponse struct {
