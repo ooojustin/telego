@@ -50,8 +50,8 @@ func (tc *TelegramClient) SetMyCommands(commands []BotCommand, scope *Scope, lan
 		"language_code": languageCode,
 	}
 
-	if scope != nil {
-		request["scope"] = scope
+	if scope == nil {
+		request["scope"] = &BotCommandScopeAllPrivateChats
 	}
 
 	resp, err := tc.SendRequest(POST, "setMyCommands", &request)
