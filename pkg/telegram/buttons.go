@@ -33,13 +33,12 @@ type InlineKeyboardButton struct {
 	CallbackData string `json:"callback_data,omitempty"` // Up to 64 bytes
 }
 
-// https://core.telegram.org/bots/api#callbackquery
 type CallbackQuery struct {
 	Id      string  `json:"id"`
 	From    User    `json:"from"`
 	Message Message `json:"message"`
 	ChatID  string  `json:"chat_instance"`
-	Data    string  `json:"data"`
+	Data    string  `json:"data,omitempty"`
 }
 
 // https://core.telegram.org/bots/api#menubutton
@@ -76,6 +75,10 @@ func CreateCallbackButton(text string, data string) InlineKeyboardButton {
 		Text:         text,
 		CallbackData: data,
 	}
+}
+
+func CreateTextButton(text string) InlineKeyboardButton {
+	return InlineKeyboardButton{Text: text}
 }
 
 func CreateButtons(perRow int, buttons ...InlineKeyboardButton) InlineKeyboardMarkup {
