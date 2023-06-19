@@ -19,6 +19,7 @@ const (
 const (
 	TelegramApiUrlFormat string = "https://api.telegram.org/bot%s/%s"
 	JsonContentType      string = "application/json"
+	TelegramParseMode    string = "MarkdownV2"
 )
 
 var (
@@ -53,6 +54,8 @@ func NewTelegramClient(token string, parseMode string) *TelegramClient {
 
 	if len(parseMode) > 0 {
 		tg.ParseMode = parseMode
+	} else {
+		tg.ParseMode = TelegramParseMode
 	}
 
 	return tg
