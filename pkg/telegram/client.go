@@ -90,18 +90,16 @@ func (tc *TelegramClient) SendRequest(requestMethod Request, method string, data
 	return nil, TelegramClientError(method, UnknownError)
 }
 
-func (tc *TelegramClient) CleanToken(token string) error {
-	client := NewTelegramClient(token, TelegramParseMode)
-
-	if success, err := client.DeleteMyCommands(nil, ""); success && err != nil {
+func (tc *TelegramClient) CleanToken() error {
+	if success, err := tc.DeleteMyCommands(nil, ""); success && err != nil {
 		return err
 	}
 
-	if err := client.DeleteChatMenuButton(nil); err != nil {
+	if err := tc.DeleteChatMenuButton(nil); err != nil {
 		return err
 	}
 
-	if err := client.DeleteWebhook(true); err != nil {
+	if err := tc.DeleteWebhook(true); err != nil {
 		return err
 	}
 
